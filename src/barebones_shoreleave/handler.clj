@@ -1,15 +1,15 @@
 (ns barebones-shoreleave.handler
   (:use
+   barebones-shoreleave.middleware
    compojure.core)
   (:require
    [shoreleave.middleware.rpc :refer [defremote wrap-rpc]]
    [ring.middleware.anti-forgery]
-   [ring.middleware.session.cookie :refer [cookie-store]]
    [compojure.handler :as handler]
    [compojure.route :as route]
    [net.cgrand.enlive-html :as html]))
 
-;; Enlive
+;; Enlive template
 (html/deftemplate main-layout
   "public/templates/index.html"
   [text]
@@ -19,6 +19,7 @@
 (defremote ping [pingback]
   (str "You have hit the API with: " pingback))
 
+;; Barely modified default routes
 (defroutes app-routes
   (GET "/" []
        (main-layout "<a href='#' id='click'>Click me!</a>"))
@@ -27,6 +28,7 @@
 
 (def app
   (-> app-routes
-      ring.middleware.anti-forgery/wrap-anti-forgery
       wrap-rpc
+      wrap-add-anti-forgery-cookie
+      ring.middleware.anti-forgery/wrap-anti-forgery
       handler/site))

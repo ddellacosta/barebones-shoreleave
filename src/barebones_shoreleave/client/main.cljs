@@ -2,16 +2,16 @@
   (:use
    [jayq.core :only [$ bind]])
   (:require
-   [shoreleave.remotes.http-rpc :as rpc])
+   [shoreleave.remote])
   (:require-macros
-   [shoreleave.remotes.macros :as srm])) ; https://github.com/shoreleave/shoreleave-remote
+   ;; https://github.com/shoreleave/shoreleave-remote
+   [shoreleave.remotes.macros :as srm]))
 
 (def $click ($ :a#click))
 
-(bind $click "click"
-      ;; (js/alert "WE GOT A CLICK!")))
-      (fn []
-        ;; ### Confirm we have remote-calling activated
-        (srm/rpc
-         (ping "Testing...") [pong-response]
-         (js/alert pong-response))))
+(bind
+ $click "click"
+ (fn []
+   (srm/rpc
+    (ping "Testing...") [pong-response]
+    (js/alert pong-response))))
