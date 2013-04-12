@@ -1,6 +1,6 @@
 # Barebones Shoreleave.
 
-Shoreleave is billed as
+[Shoreleave][1] is billed as
 
 > A smarter client-side in ClojureScript
 >
@@ -193,7 +193,7 @@ POST http://127.0.0.1:3000/_shoreleave 403 (Forbidden) baseline.js:16916
 XHR ERROR: <h1>Invalid anti-forgery token</h1> 
 ```
 
-...is what I see in my console.  Hmm, this is weird.  At least we know it's working I suppose...
+...is what I see in my console.  Hmm, this is weird.  At least we know CSRF protection is working I suppose...
 
 I dug back into Shoreleave-baseline (and after an hour of digging through the code), I could see that there was a cookie getting set that I don't have in my own simple app:
 
@@ -218,9 +218,8 @@ Poking around Shoreleave-baseline's `baseline` directory code (i.e. the code in 
    customized ring-anti-forgery middleware."
   [handler & [opts]]
   (fn [request]
-    (let [token (-> request :session (get "__anti-forgery-token"))
-          response (handler request)]
-      (if token
+    (let [response (handler request)]
+      (if-let [token (-> request :session (get "__anti-forgery-token"))]
         (assoc-in response [:cookies "__anti-forgery-token"] token)
         response))))
 ```
@@ -236,23 +235,23 @@ Comments/criticisms/pull requests welcome! (You can attach "ddellacosta" to the 
 Distributed under the MIT License (http://dd.mit-license.org/)
 Text copyright © 2013 Dave Della Costa
 
-[1] https://github.com/shoreleave
-[2] https://github.com/shoreleave/shoreleave-services
-[3] https://github.com/shoreleave/shoreleave-pubsub
-[4] https://github.com/shoreleave/shoreleave-worker
-[5] https://github.com/shoreleave/shoreleave-remote-ring
-[6] https://github.com/shoreleave/shoreleave-remote
-[7] https://github.com/shoreleave/shoreleave-browser
-[8] https://github.com/shoreleave/shoreleave-core
-[9] https://github.com/shoreleave/shoreleave-remote-noir
-[10] https://clojars.org/shoreleave
-[11] https://github.com/shoreleave/shoreleave-remote-ring/issues/5
-[12] https://github.com/shoreleave/shoreleave-baseline
-[13] https://github.com/shoreleave/demo-shoreleave-solr
-[14] https://clojars.org/shoreleave/shoreleave-remote-ring
-[15] https://github.com/weavejester/ring-anti-forgery
-[16] https://github.com/ddellacosta/barebones-shoreleave
-[17] https://github.com/shoreleave/shoreleave-baseline/blob/master/src/ring/middleware/anti_forgery.clj#L22
-[18] https://github.com/cgrand/enlive
-[19] https://github.com/ibdknox/jayq
-[20] https://github.com/weavejester/ring-anti-forgery/pull/13
+[1]: https://github.com/shoreleave
+[2]: https://github.com/shoreleave/shoreleave-services
+[3]: https://github.com/shoreleave/shoreleave-pubsub
+[4]: https://github.com/shoreleave/shoreleave-worker
+[5]: https://github.com/shoreleave/shoreleave-remote-ring
+[6]: https://github.com/shoreleave/shoreleave-remote
+[7]: https://github.com/shoreleave/shoreleave-browser
+[8]: https://github.com/shoreleave/shoreleave-core
+[9]: https://github.com/shoreleave/shoreleave-remote-noir
+[10]: https://clojars.org/shoreleave
+[11]: https://github.com/shoreleave/shoreleave-remote-ring/issues/5
+[12]: https://github.com/shoreleave/shoreleave-baseline
+[13]: https://github.com/shoreleave/demo-shoreleave-solr
+[14]: https://clojars.org/shoreleave/shoreleave-remote-ring
+[15]: https://github.com/weavejester/ring-anti-forgery
+[16]: https://github.com/ddellacosta/barebones-shoreleave
+[17]: https://github.com/shoreleave/shoreleave-baseline/blob/master/src/ring/middleware/anti_forgery.clj#L22
+[18]: https://github.com/cgrand/enlive
+[19]: https://github.com/ibdknox/jayq
+[20]: https://github.com/weavejester/ring-anti-forgery/pull/13

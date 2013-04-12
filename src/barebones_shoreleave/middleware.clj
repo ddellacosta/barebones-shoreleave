@@ -18,8 +18,7 @@
    customized ring-anti-forgery middleware."
   [handler & [opts]]
   (fn [request]
-    (let [token (-> request :session (get "__anti-forgery-token"))
-          response (handler request)]
-      (if token
+    (let [response (handler request)]
+      (if-let [token (-> request :session (get "__anti-forgery-token"))]
         (assoc-in response [:cookies "__anti-forgery-token"] token)
         response))))
